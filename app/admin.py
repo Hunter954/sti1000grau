@@ -1296,6 +1296,53 @@ def save_live():
     return redirect(url_for("admin.settings_page"))
 
 
+@admin_bp.get("/settings/footer-social")
+@login_required
+def footer_social_page():
+    r = _require_admin()
+    if r:
+        return r
+    return render_template(
+        "admin/footer_social.html",
+        footer_contact_label=_setting("footer_contact_label", "Fale conosco"),
+        footer_contact_url=_setting("footer_contact_url", "#"),
+        footer_privacy_label=_setting("footer_privacy_label", "Privacidade"),
+        footer_privacy_url=_setting("footer_privacy_url", "#"),
+        footer_terms_label=_setting("footer_terms_label", "Termos e Condições"),
+        footer_terms_url=_setting("footer_terms_url", "#"),
+        footer_social_label=_setting("footer_social_label", "Redes Sociais:"),
+        footer_copyright_text=_setting("footer_copyright_text", "Todos os direitos reservados - 2009-2026 - FOZ1000GRAU.COM.BR"),
+        instagram_url=_setting("instagram_url", ""),
+        facebook_url=_setting("facebook_url", ""),
+        youtube_url=_setting("youtube_url", ""),
+        x_url=_setting("x_url", ""),
+        **_common_admin_context("footer_social"),
+    )
+
+
+@admin_bp.post("/settings/footer-social")
+@login_required
+def save_footer_social():
+    r = _require_admin()
+    if r:
+        return r
+    _save_setting("footer_contact_label", (request.form.get("footer_contact_label", "") or "").strip() or "Fale conosco")
+    _save_setting("footer_contact_url", (request.form.get("footer_contact_url", "") or "").strip() or "#")
+    _save_setting("footer_privacy_label", (request.form.get("footer_privacy_label", "") or "").strip() or "Privacidade")
+    _save_setting("footer_privacy_url", (request.form.get("footer_privacy_url", "") or "").strip() or "#")
+    _save_setting("footer_terms_label", (request.form.get("footer_terms_label", "") or "").strip() or "Termos e Condições")
+    _save_setting("footer_terms_url", (request.form.get("footer_terms_url", "") or "").strip() or "#")
+    _save_setting("footer_social_label", (request.form.get("footer_social_label", "") or "").strip() or "Redes Sociais:")
+    _save_setting("footer_copyright_text", (request.form.get("footer_copyright_text", "") or "").strip() or "Todos os direitos reservados - 2009-2026 - FOZ1000GRAU.COM.BR")
+    _save_setting("instagram_url", (request.form.get("instagram_url", "") or "").strip())
+    _save_setting("facebook_url", (request.form.get("facebook_url", "") or "").strip())
+    _save_setting("youtube_url", (request.form.get("youtube_url", "") or "").strip())
+    _save_setting("x_url", (request.form.get("x_url", "") or "").strip())
+    db.session.commit()
+    flash("Rodapé e redes sociais atualizados com sucesso.", "success")
+    return redirect(url_for("admin.footer_social_page"))
+
+
 @admin_bp.post("/settings/logo")
 @login_required
 def save_logo():
