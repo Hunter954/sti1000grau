@@ -946,6 +946,138 @@ def insights_page():
 
 
 
+@admin_bp.get("/categories")
+@login_required
+def categories_list():
+    r = _require_admin()
+    if r:
+        return r
+    categories = Category.query.order_by(Category.name.asc()).all()
+    count_rows = (
+        db.session.query(Category.id, func.count(post_categories.c.post_id))
+        .outerjoin(post_categories, Category.id == post_categories.c.category_id)
+        .group_by(Category.id)
+        .all()
+    )
+    counts = {category_id: total for category_id, total in count_rows}
+    return render_template(
+        'admin/categories_list.html',
+        categories=categories,
+        counts=counts,
+        **_common_admin_context('categories'),
+    )
+
+
+@admin_bp.route('/categories/new', methods=['GET', 'POST'])
+@login_required
+def categories_new():
+    r = _require_admin()
+    if r:
+        return r
+    form = CategoryForm()
+    if form.validate_on_submit():
+        name = (form.name.data or '').strip()
+        desired_slug = (form.slug.data or name or 'categoria').strip()
+        slug = _ensure_unique_slug(Category, desired_slug)
+        category = Category(name=name, slug=slug)
+        db.session.add(category)
+        db.session.commit()
+        flash('Categoria criada com sucesso.', 'success')
+        return redirect(url_for('admin.categories_edit', category_id=category.id))
+    return render_template('admin/category_form.html', form=form, mode='new', category=None, **_common_admin_context('categories'))
+
+
+@admin_bp.route('/categories/<int:category_id>/edit', methods=['GET', 'POST'])
+@login_required
+def categories_edit(category_id):
+    r = _require_admin()
+    if r:
+        return r
+    category = Category.query.get_or_404(category_id)
+    form = CategoryForm()
+    if request.method == 'GET':
+        form.name.data = category.name
+        form.slug.data = category.slug
+    elif form.validate_on_submit():
+        category.name = (form.name.data or '').strip()
+        desired_slug = (form.slug.data or category.name or 'categoria').strip()
+        category.slug = _ensure_unique_slug(Category, desired_slug, object_id=category.id)
+        db.session.commit()
+        flash('Categoria atualizada com sucesso.', 'success')
+        return redirect(url_for('admin.categories_edit', category_id=category.id))
+    return render_template('admin/category_form.html', form=form, mode='edit', category=category, **_common_admin_context('categories'))
+
+
+@admin_bp.post('/categories/<int:category_id>/delete')
+@login_required
+def categories_delete(category_id):
+    r = _require_admin()
+    if r:
+        return r
+    category = Category.query.get_or_404(category_id)
+    linked_posts = db.session.query(func.count(post_categories.c.post_id)).filter(post_categories.c.category_id == category.id).scalar() or 0
+    if linked_posts:
+        flash('Não foi possível excluir. Essa categoria ainda está vinculada a matérias.', 'danger')
+        return redirect(url_for('admin.categories_edit', category_id=category.id))
+    db.session.delete(category)
+    db.session.commit()
+    flash('Categoria excluída com sucesso.', 'success')
+    return redirect(url_for('admin.categories_list'))
+
+
+@admin_bp.get('/media')
+@login_required
+def media_library():
+    r = _require_admin()
+    if r:
+        return r
+    files = []
+    root = _media_root()
+    if root.exists():
+        for p in sorted([item for item in root.rglob('*') if item.is_file()], key=lambda item: item.stat().st_mtime, reverse=True):
+            files.append({
+                'name': p.name,
+                'url': f"{current_app.config['MEDIA_URL_PREFIX'].rstrip('/')}/{p.relative_to(root).as_posix()}",
+                'size_kb': max(1, round(p.stat().st_size / 1024)),
+                'updated_at': datetime.fromtimestamp(p.stat().st_mtime),
+            })
+    return render_template('admin/media_library.html', files=files, **_common_admin_context('media'))
+
+
+@admin_bp.post('/media/upload')
+@login_required
+def media_upload():
+    r = _require_admin()
+    if r:
+        return r
+    uploads = request.files.getlist('files')
+    sent = 0
+    for upload in uploads:
+        if upload and getattr(upload, 'filename', ''):
+            _save_upload(upload, 'general')
+            sent += 1
+    if sent:
+        flash(f'{sent} arquivo(s) enviado(s) com sucesso.', 'success')
+    else:
+        flash('Selecione pelo menos um arquivo para enviar.', 'warning')
+    return redirect(url_for('admin.media_library'))
+
+
+@admin_bp.post('/media/delete')
+@login_required
+def media_delete():
+    r = _require_admin()
+    if r:
+        return r
+    url = (request.form.get('url') or '').strip()
+    if url:
+        _delete_local_media(url)
+        flash('Arquivo excluído com sucesso.', 'success')
+    else:
+        flash('Arquivo inválido.', 'danger')
+    return redirect(url_for('admin.media_library'))
+
+
 @admin_bp.get("/users")
 @login_required
 def users_list():
