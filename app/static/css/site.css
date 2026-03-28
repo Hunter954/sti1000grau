@@ -807,8 +807,10 @@ img{max-width:100%;display:block}
 .f1000-editorial__side{display:flex;flex-direction:column;gap:14px;}
 .f1000-widget-card{border-radius:16px;overflow:hidden;background:var(--ad);}
 .f1000-widget-card.weather-box{height:auto;min-height:0;}
-.f1000-widget-card .weather-widget-embed,.f1000-widget-card .weather-widget-embed > div[id^="ww_"]{height:100% !important;min-height:160px !important;}
-.f1000-widget-card.weather-box iframe{width:112% !important;height:112% !important;transform:scale(.892);transform-origin:top left;}
+.f1000-widget-card .weather-widget-embed,.f1000-widget-card .weather-widget-embed > div[id^="ww_"]{height:100% !important;min-height:128px !important;}
+.f1000-widget-card .weather-widget-embed--compact{min-height:128px;}
+.f1000-widget-card .weather-widget-embed--compact > div[id^="ww_"]{min-height:128px !important;}
+.f1000-widget-card.weather-box iframe{width:100% !important;height:100% !important;transform:none;transform-origin:top left;}
 .f1000-widget-card--ad{aspect-ratio:1/1;}
 .f1000-band--bottom{margin-top:22px;}
 .site-footer{padding:24px 0 0;background:#e2e2e2;margin-top:26px;}
