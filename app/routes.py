@@ -140,6 +140,22 @@ def _meta_defaults():
             "youtube": _setting("youtube_url", ""),
             "x": _setting("x_url", ""),
         },
+        "footer_links": {
+            "contact": {
+                "label": _setting("footer_contact_label", "Fale conosco"),
+                "url": _setting("footer_contact_url", "#"),
+            },
+            "privacy": {
+                "label": _setting("footer_privacy_label", "Privacidade"),
+                "url": _setting("footer_privacy_url", "#"),
+            },
+            "terms": {
+                "label": _setting("footer_terms_label", "Termos e Condições"),
+                "url": _setting("footer_terms_url", "#"),
+            },
+        },
+        "footer_social_label": _setting("footer_social_label", "Redes Sociais:"),
+        "footer_copyright_text": _setting("footer_copyright_text", "Todos os direitos reservados - 2009-2026 - FOZ1000GRAU.COM.BR"),
         "organization_schema": {
             "name": _site_name(),
             "url": request.url_root.rstrip("/"),
