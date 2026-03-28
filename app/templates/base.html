@@ -196,13 +196,13 @@
       </div>
 
       <div class="footer-links footer-links--f1000">
-        <a href="{{ footer_links.contact.url or '#' }}">{{ footer_links.contact.label }}</a>
-        <a href="{{ footer_links.privacy.url or '#' }}">{{ footer_links.privacy.label }}</a>
-        <a href="{{ footer_links.terms.url or '#' }}">{{ footer_links.terms.label }}</a>
+        <a href="#">Fale conosco</a>
+        <a href="#">Privacidade</a>
+        <a href="#">Termos e Condições</a>
       </div>
 
       <div class="footer-social footer-social--f1000">
-        <strong>{{ footer_social_label }}</strong>
+        <strong>Redes Sociais:</strong>
         <div class="footer-social__icons">
           {% if social_links.facebook %}<a href="{{ social_links.facebook }}" target="_blank" rel="noopener" aria-label="Facebook"><i class="bi bi-facebook"></i></a>{% endif %}
           {% if social_links.x %}<a href="{{ social_links.x }}" target="_blank" rel="noopener" aria-label="X"><i class="bi bi-twitter-x"></i></a>{% endif %}
@@ -212,7 +212,12 @@
       </div>
 
       <div class="footer-copy footer-copy--f1000">
-        {{ footer_copyright_text }}
+        Todos os direitos reservados - 2009-2026 - FOZ1000GRAU.COM.BR
+      </div>
+    </div>
+    <div class="footer-credit footer-credit--f1000">
+      <div class="container-xl site-footer-container footer-credit__inner">
+        <span>Desenvolvido e atualizado por: <a href="https://www.instagram.com/kpremoli/" target="_blank" rel="noopener">Kevin Premoli</a></span>
       </div>
     </div>
   </footer>
