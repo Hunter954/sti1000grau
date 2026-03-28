@@ -745,23 +745,7 @@ img{max-width:100%;display:block}
 @media (max-width: 767px){.desktop-topline{display:none}.mobile-topbar{display:grid}.guide-card-grid,.guide-listing-grid{grid-template-columns:1fr}.guide-search-input-wrap{flex-wrap:wrap}.guide-search-input-wrap button{width:100%}.guide-alpha-group{grid-template-columns:1fr}.guide-alpha-letter{width:54px;height:54px;font-size:24px}.guide-hero{padding:22px}.guide-hero-stats{grid-template-columns:repeat(2,1fr);width:100%}}
 
 
-/* --- Foz 1000 Grau home/header/footer refresh --- */
-:root{
-  --bg:#ececec;
-  --surface:#fff;
-  --surface-soft:#d1d1d1;
-  --text:#101010;
-  --muted:#4f4f4f;
-  --line:#d9d9d9;
-  --accent:#3814ff;
-  --ad:#3c14ff;
-  --weather:#3c14ff;
-  --radius:18px;
-  --container:1180px;
-}
-body{background:var(--bg);color:var(--text);}
-.site-header{padding:18px 0 8px;}
-.header-shell{gap:18px;}
+/* Foz1000Grau home/layout */
 .f1000-topline{align-items:center;gap:18px;}
 .main-nav{justify-content:center;flex:1 1 auto;gap:26px;}
 .nav-link{font-size:14px;font-weight:900;text-transform:none;letter-spacing:-.01em;}
@@ -864,3 +848,20 @@ body{background:var(--bg);color:var(--text);}
   .f1000-widget-card--ad{aspect-ratio:auto;min-height:220px;}
   .footer-links--f1000{flex-direction:column;align-items:flex-start;gap:10px;}
 }
+
+
+.brand-row--f1000{align-items:center;gap:24px;padding-top:22px;}
+.header-panels--f1000{grid-template-columns:1fr;}
+.header-banner--f1000 .ad-placeholder,.header-banner--f1000 .banner-wide{height:140px;min-height:140px;border-radius:16px;}
+.footer-shell--f1000{display:grid;grid-template-columns:220px 1fr auto;grid-template-areas:"brand links social" "brand copy copy";gap:18px 36px;align-items:center;}
+.footer-branding--f1000{grid-area:brand;}
+.footer-links--f1000{grid-area:links;display:flex;flex-direction:column;gap:10px;}
+.footer-links--f1000 a{color:#111;text-decoration:none;font-weight:600;}
+.footer-links--f1000 a:hover{text-decoration:underline;}
+.footer-social--f1000{grid-area:social;justify-self:end;display:flex;align-items:center;gap:12px;}
+.footer-social__icons{display:flex;align-items:center;gap:8px;}
+.footer-social__icons a{display:inline-flex;width:34px;height:34px;border-radius:999px;align-items:center;justify-content:center;background:#111;color:#fff;text-decoration:none;}
+.footer-copy--f1000{grid-area:copy;font-size:15px;color:#111;font-weight:700;}
+.footer-credit--f1000{margin-top:0;padding:12px 0 0;border-top:0;background:#3c14ff;color:#fff;border-radius:0;}
+.footer-credit--f1000 a{color:#fff;}
+@media (max-width: 991px){.brand-row--f1000{padding-top:0}.footer-shell--f1000{grid-template-columns:1fr;grid-template-areas:"brand" "links" "social" "copy";justify-items:flex-start}.footer-social--f1000{justify-self:start;flex-wrap:wrap;}}

@@ -11,26 +11,8 @@
 <section class="f1000-home">
   <div class="f1000-divider"></div>
 
+  {% if hero %}
   <section class="f1000-hero">
-    <div class="f1000-hero__brandblock">
-      <a class="f1000-hero__brand" href="{{ url_for('site.home') }}" aria-label="Home">
-        {% if logo_url %}
-          <img src="{{ logo_url }}" alt="{{ site_name_value }}">
-        {% else %}
-          <span class="f1000-hero__fallback">FOZ DO<br>IGUAÇU<br><small>1000GRAU</small></span>
-        {% endif %}
-      </a>
-    </div>
-
-    <div class="f1000-hero__ad">
-      {% if ad_home_middle %}
-        <div class="ad-box">{{ ad_home_middle|safe }}</div>
-      {% else %}
-        <div class="ad-placeholder banner-wide" aria-hidden="true"></div>
-      {% endif %}
-    </div>
-
-    {% if hero %}
     <article class="f1000-hero__copy">
       <div class="story-meta-row story-meta-row--stack">
         <span class="tag tag--violet">{{ display_category_name(hero_category) }}</span>
@@ -44,8 +26,8 @@
     <a class="f1000-hero__media" href="{{ url_for('site.post', slug=hero.slug) }}">
       <div class="thumb-card-image f1000-hero__image" style="background-image:url('{{ hero.featured_image or '' }}')"></div>
     </a>
-    {% endif %}
   </section>
+  {% endif %}
 
   <section class="f1000-card-grid">
     {% for p in hero_cards %}
@@ -62,8 +44,8 @@
   </section>
 
   <div class="f1000-band">
-    {% if ad_article_end %}
-      <div class="ad-box">{{ ad_article_end|safe }}</div>
+    {% if ad_home_middle %}
+      <div class="ad-box">{{ ad_home_middle|safe }}</div>
     {% else %}
       <div class="ad-placeholder banner-wide" aria-hidden="true"></div>
     {% endif %}

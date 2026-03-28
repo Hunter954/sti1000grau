@@ -702,6 +702,120 @@ def _fill_post_form_from_obj(form: PostAdminForm, post: Post):
     form.categories.data = [c.id for c in post.categories]
 
 
+@admin_bp.route('/posts')
+@login_required
+def posts_list():
+    r = _require_admin()
+    if r:
+        return r
+    term = (request.args.get('q') or '').strip()
+    source = (request.args.get('source') or 'all').strip().lower()
+    q = Post.query
+    if term:
+        q = q.filter(Post.title.ilike(f"%{term}%"))
+    if source in {'local', 'wp', 'hub'}:
+        q = q.filter(Post.source == source)
+    posts = q.order_by(desc(Post.published_at), desc(Post.updated_at), desc(Post.id)).all()
+    return render_template(
+        'admin/posts_list.html',
+        posts=posts,
+        term=term,
+        source=source,
+        **_common_admin_context('posts'),
+    )
+
+
+@admin_bp.route('/posts/new', methods=['GET', 'POST'])
+@login_required
+def posts_new():
+    r = _require_admin()
+    if r:
+        return r
+    form = PostAdminForm()
+    _bind_post_form_choices(form)
+    if form.validate_on_submit():
+        image_url = (form.featured_image.data or '').strip()
+        if form.featured_image_file.data:
+            image_url = _save_upload(form.featured_image_file.data, 'posts')
+        action = (request.form.get('post_action') or 'publish').strip().lower()
+        post = Post(
+            source='local',
+            title=(form.title.data or '').strip(),
+            slug=_ensure_unique_slug(Post, form.title.data or 'materia'),
+            excerpt=(form.excerpt.data or '').strip() or None,
+            content_html=(form.content_html.data or '').strip() or None,
+            featured_image=image_url or None,
+            author_name='Anônimo',
+            updated_at=datetime.utcnow(),
+        )
+        if action == 'publish':
+            post.published_at = datetime.utcnow()
+        else:
+            post.published_at = None
+        selected_ids = form.categories.data or []
+        if selected_ids:
+            post.categories = Category.query.filter(Category.id.in_(selected_ids)).all()
+        db.session.add(post)
+        db.session.commit()
+        flash('Matéria criada com sucesso.', 'success')
+        return redirect(url_for('admin.posts_edit', post_id=post.id))
+    return render_template('admin/post_form.html', form=form, mode='new', post=None, hub=_hub_config(), **_common_admin_context('posts'))
+
+
+@admin_bp.route('/posts/<int:post_id>/edit', methods=['GET', 'POST'])
+@login_required
+def posts_edit(post_id):
+    r = _require_admin()
+    if r:
+        return r
+    post = Post.query.get_or_404(post_id)
+    form = PostAdminForm()
+    _bind_post_form_choices(form)
+    if request.method == 'GET':
+        _fill_post_form_from_obj(form, post)
+    elif form.validate_on_submit():
+        old_image = post.featured_image or ''
+        image_url = (form.featured_image.data or '').strip()
+        if form.featured_image_file.data:
+            image_url = _save_upload(form.featured_image_file.data, 'posts')
+        post.title = (form.title.data or '').strip()
+        post.slug = _ensure_unique_slug(Post, post.title or 'materia', object_id=post.id)
+        post.excerpt = (form.excerpt.data or '').strip() or None
+        post.content_html = (form.content_html.data or '').strip() or None
+        post.featured_image = image_url or None
+        post.author_name = 'Anônimo'
+        post.updated_at = datetime.utcnow()
+        action = (request.form.get('post_action') or 'publish').strip().lower()
+        post.published_at = datetime.utcnow() if action == 'publish' else None
+        selected_ids = form.categories.data or []
+        post.categories = Category.query.filter(Category.id.in_(selected_ids)).all() if selected_ids else []
+        db.session.commit()
+        if form.featured_image_file.data and old_image and old_image != post.featured_image:
+            _delete_local_media(old_image)
+        flash('Matéria atualizada com sucesso.', 'success')
+        return redirect(url_for('admin.posts_edit', post_id=post.id))
+    return render_template('admin/post_form.html', form=form, mode='edit', post=post, hub=_hub_config(), **_common_admin_context('posts'))
+
+
+@admin_bp.post('/posts/<int:post_id>/delete')
+@login_required
+def posts_delete(post_id):
+    r = _require_admin()
+    if r:
+        return r
+    post = Post.query.get_or_404(post_id)
+    if post.source != 'local':
+        flash('Somente matérias locais podem ser excluídas por aqui.', 'warning')
+        return redirect(url_for('admin.posts_edit', post_id=post.id))
+    image = post.featured_image or ''
+    db.session.delete(post)
+    db.session.commit()
+    if image:
+        _delete_local_media(image)
+    flash('Matéria excluída com sucesso.', 'success')
+    return redirect(url_for('admin.posts_list'))
+
+
 def _wp_stats():
     total_wp_posts = db.session.query(func.count(Post.id)).filter(Post.source == "wp").scalar() or 0
     localized_images = db.session.query(func.count(Post.id)).filter(Post.source == "wp", Post.featured_image.like('/media/%')).scalar() or 0

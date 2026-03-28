@@ -130,7 +130,7 @@
         </form>
       </div>
 
-      <div class="brand-row">
+      <div class="brand-row brand-row--f1000">
         <a class="brand desktop-brand" href="{{ url_for('site.home') }}" aria-label="Home">
           {% if logo_url %}
             <img src="{{ logo_url }}" alt="{{ site_name_value }}" />
@@ -139,20 +139,13 @@
           {% endif %}
         </a>
 
-        <div class="header-panels">
-          <div class="header-banner">
+        <div class="header-panels header-panels--f1000">
+          <div class="header-banner header-banner--f1000">
             {% if ad_header %}
               <div class="ad-box">{{ ad_header|safe }}</div>
             {% else %}
               <div class="ad-placeholder" aria-hidden="true"></div>
             {% endif %}
-          </div>
-
-          <div class="weather-box desktop-weather" id="meteorologia">
-            <div class="weather-widget-embed">
-            <div id="ww_f62fe32e563e5" v='1.3' loc='id' a='{"t":"horizontal","lang":"pt","sl_lpl":1,"ids":["wl4952"],"font":"Arial","sl_ics":"one_a","sl_sot":"celsius","cl_bkg":"#0288D1","cl_font":"#FFFFFF","cl_cloud":"#FFFFFF","cl_persp":"#FFFFFF","cl_sun":"#FFC107","cl_moon":"#FFC107","cl_thund":"#FF5722"}'>Fonte de dados meteorológicos: <a href="https://wetterlang.de" id="ww_f62fe32e563e5_u" target="_blank">Wettervorhersage 30 tage</a></div>
-            </div>
-            <script async src="https://app3.weatherwidget.org/js/?id=ww_f62fe32e563e5"></script>
           </div>
         </div>
       </div>
@@ -191,7 +184,7 @@
   </main>
 
   <footer class="site-footer">
-    <div class="container-xl site-footer-container footer-shell">
+    <div class="container-xl site-footer-container footer-shell footer-shell--f1000">
       <div class="footer-branding footer-branding--f1000">
         <a class="brand footer-brand" href="{{ url_for('site.home') }}">
           {% if logo_url %}
@@ -223,163 +216,6 @@
       </div>
     </div>
     <div class="container-xl site-footer-container footer-credit footer-credit--f1000">
-      Desenvolvido e Atualizado por: <a href="https://www.instagram.com/kpremoli/" target="_blank" rel="noopener">Kevin Premoli</a>
-    </div>
-  </footer>
-
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', '{{ google_analytics_id }}');
-  </script>
-  {% endif %}
-</head>
-<body>
-  <header class="site-header">
-    <div class="container-xl site-header-container header-shell">
-      <div class="mobile-topbar d-md-none">
-        <button class="mobile-icon-btn mobile-live-btn" type="button" aria-label="Abrir câmera ao vivo" data-livecam-open>
-          <i class="bi bi-camera-video-fill" aria-hidden="true"></i>
-        </button>
-
-        <a class="brand mobile-brand" href="{{ url_for('site.home') }}" aria-label="Home">
-          {% if logo_url %}
-            <img src="{{ logo_url }}" alt="{{ site_name_value }}" />
-          {% else %}
-            <span class="brand-text">Foz do <strong>Iguaçu</strong><small>1000grau</small></span>
-          {% endif %}
-        </a>
-
-        <button class="mobile-icon-btn mobile-menu-btn" type="button" aria-label="Abrir menu" aria-controls="mobileMenuDrawer" aria-expanded="false" data-mobile-menu-toggle>
-          <i class="bi bi-list" aria-hidden="true"></i>
-        </button>
-      </div>
-
-      <div class="mobile-menu-backdrop d-md-none" data-mobile-menu-close></div>
-      <aside class="mobile-menu-drawer d-md-none" id="mobileMenuDrawer" aria-hidden="true">
-        <div class="mobile-menu-head">
-          <strong>Menu</strong>
-          <button class="mobile-menu-close" type="button" aria-label="Fechar menu" data-mobile-menu-close>
-            <i class="bi bi-x-lg" aria-hidden="true"></i>
-          </button>
-        </div>
-        <nav class="mobile-menu-list" aria-label="Menu mobile">
-          <a class="mobile-menu-link" href="{{ url_for('site.home') }}">Início</a>
-          {% for c in nav_categories[:7] %}
-            {% set short_name = c.name.split(' e ')[-1].strip() if ' e ' in c.name else c.name %}
-            <a class="mobile-menu-link" href="{{ url_for('site.category', slug=c.slug) }}">{{ short_name }}</a>
-          {% endfor %}
-        </nav>
-      </aside>
-
-      <div class="header-topline desktop-topline f1000-topline">
-        <nav class="main-nav" aria-label="Menu principal">
-          <a class="nav-link" href="{{ url_for('site.home') }}">Home</a>
-          {% for c in nav_categories[:8] %}
-            <a class="nav-link" href="{{ url_for('site.category', slug=c.slug) }}">{{ c.name }}</a>
-          {% endfor %}
-        </nav>
-
-        <form class="f1000-search" action="{{ url_for('site.search') }}" method="get" role="search">
-          <i class="bi bi-search" aria-hidden="true"></i>
-          <input type="search" name="q" placeholder="Buscar..." value="{{ request.args.get('q', '') }}" aria-label="Buscar">
-        </form>
-      </div>
-
-      <div class="brand-row">
-        <a class="brand desktop-brand" href="{{ url_for('site.home') }}" aria-label="Home">
-          {% if logo_url %}
-            <img src="{{ logo_url }}" alt="{{ site_name_value }}" />
-          {% else %}
-            <span class="brand-text">Foz do <strong>Iguaçu</strong><small>1000grau</small></span>
-          {% endif %}
-        </a>
-
-        <div class="header-panels">
-          <div class="header-banner">
-            {% if ad_header %}
-              <div class="ad-box">{{ ad_header|safe }}</div>
-            {% else %}
-              <div class="ad-placeholder" aria-hidden="true"></div>
-            {% endif %}
-          </div>
-
-          <div class="weather-box desktop-weather" id="meteorologia">
-            <div class="weather-widget-embed">
-            <div id="ww_f62fe32e563e5" v='1.3' loc='id' a='{"t":"horizontal","lang":"pt","sl_lpl":1,"ids":["wl4952"],"font":"Arial","sl_ics":"one_a","sl_sot":"celsius","cl_bkg":"#0288D1","cl_font":"#FFFFFF","cl_cloud":"#FFFFFF","cl_persp":"#FFFFFF","cl_sun":"#FFC107","cl_moon":"#FFC107","cl_thund":"#FF5722"}'>Fonte de dados meteorológicos: <a href="https://wetterlang.de" id="ww_f62fe32e563e5_u" target="_blank">Wettervorhersage 30 tage</a></div>
-            </div>
-            <script async src="https://app3.weatherwidget.org/js/?id=ww_f62fe32e563e5"></script>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <div class="livecam-pip" id="livecamPip" hidden aria-hidden="true">
-    <div class="livecam-pip-window" data-livecam-window>
-      <div class="livecam-pip-bar" data-livecam-drag>
-        <span><i class="bi bi-camera-video-fill" aria-hidden="true"></i> Câmera ao vivo</span>
-        <div class="livecam-pip-actions">
-          <button type="button" class="livecam-pip-btn" aria-label="Alternar tamanho" data-livecam-size>
-            <i class="bi bi-arrows-angle-expand" aria-hidden="true"></i>
-          </button>
-          <button type="button" class="livecam-pip-btn" aria-label="Fechar câmera" data-livecam-close>
-            <i class="bi bi-x-lg" aria-hidden="true"></i>
-          </button>
-        </div>
-      </div>
-      <div class="livecam-pip-body">
-        <div class="livecam-wrap" data-hardcoded-livecam style="--zoom:1.30; --move-x:0px; --move-y:0px; --ratio:16/9;">
-          <div class="livecam-live"><span class="dot"></span><span>AO VIVO</span></div>
-          <div id="liveclock" class="livecam-clock">--/--/---- --:--:--</div>
-          <div id="live-loc" class="livecam-loc">
-            <span id="loc-text" class="loc-text">Ponte Internacional da Amizade</span>
-          </div>
-          <div class="livecam-wm">foz1000grau.com.br</div>
-          <video id="livecam" playsinline muted autoplay></video>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <main class="container-xl main-wrap">
-    {% block content %}{% endblock %}
-  </main>
-
-  <footer class="site-footer">
-    <div class="container-xl site-footer-container footer-shell">
-      <div class="footer-branding">
-        <a class="brand footer-brand" href="{{ url_for('site.home') }}">
-          {% if logo_url %}
-            <img src="{{ logo_url }}" alt="{{ site_name_value }}" />
-          {% else %}
-            <span class="brand-text">Foz do <strong>Iguaçu</strong><small>1000grau</small></span>
-          {% endif %}
-        </a>
-        <h3>O Maior Portal de Notícias do Oeste do Paraná.</h3>
-        <ul class="footer-points">
-          <li>Líder em audiência digital na região</li>
-          <li>Mais de 154 mil seguidores no Facebook</li>
-          <li>Mais de 144 mil seguidores no Instagram</li>
-        </ul>
-      </div>
-
-      <div class="footer-ad-side">
-        <div class="footer-ad">
-          {% if ad_home_bottom %}
-            <div class="ad-box">{{ ad_home_bottom|safe }}</div>
-          {% else %}
-            <div class="ad-placeholder footer-ad-placeholder" aria-hidden="true"></div>
-          {% endif %}
-        </div>
-        <div class="footer-copy">
-          <strong>Mais de 1 milhão de visualizações todos os dias</strong>
-          <p>Anuncie no Paraná Pop e dê visibilidade para sua marca onde o público realmente está.</p>
-        </div>
-      </div>
-    </div>
-    <div class="container-xl site-footer-container footer-credit">
       Desenvolvido e Atualizado por: <a href="https://www.instagram.com/kpremoli/" target="_blank" rel="noopener">Kevin Premoli</a>
     </div>
   </footer>
