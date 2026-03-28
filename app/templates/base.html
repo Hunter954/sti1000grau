@@ -108,19 +108,19 @@
           </button>
         </div>
         <nav class="mobile-menu-list" aria-label="Menu mobile">
-          <a class="mobile-menu-link" href="{{ url_for('site.home') }}">Home</a>
+          <a class="mobile-menu-link" href="{{ url_for('site.home') }}">{{ "HOME" }}</a>
           {% for c in nav_categories[:7] %}
             {% set short_name = c.name.split(' e ')[-1].strip() if ' e ' in c.name else c.name %}
-            <a class="mobile-menu-link" href="{{ url_for('site.category', slug=c.slug) }}">{{ short_name }}</a>
+            <a class="mobile-menu-link" href="{{ url_for('site.category', slug=c.slug) }}">{{ short_name|upper }}</a>
           {% endfor %}
         </nav>
       </aside>
 
       <div class="header-topline desktop-topline f1000-topline">
         <nav class="main-nav" aria-label="Menu principal">
-          <a class="nav-link" href="{{ url_for('site.home') }}">Home</a>
+          <a class="nav-link" href="{{ url_for('site.home') }}">HOME</a>
           {% for c in nav_categories[:8] %}
-            <a class="nav-link" href="{{ url_for('site.category', slug=c.slug) }}">{{ c.name }}</a>
+            <a class="nav-link" href="{{ url_for('site.category', slug=c.slug) }}">{{ c.name|upper }}</a>
           {% endfor %}
         </nav>
 

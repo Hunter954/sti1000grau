@@ -441,11 +441,28 @@ def home():
 
     brasil_cat, brasil_posts = cat_posts("brasil", 6, excluded_ids)
 
+    def _category_priority(cat):
+        label = (cat.name or '').strip().lower()
+        slug = (cat.slug or '').strip().lower()
+        preferred = [
+            'cidade', 'foz-do-iguacu', 'foz', 'santa-terezinha-de-itaipu',
+            'parana', 'economia', 'esportes', 'educacao', 'policia', 'politica', 'brasil'
+        ]
+        for idx, token in enumerate(preferred):
+            if slug == token or label == token.replace('-', ' '):
+                return idx
+            if token in slug or token.replace('-', ' ') in label:
+                return idx
+        return len(preferred) + 1
+
     selected_cat_slug = (request.args.get("cat") or "").strip() or "cidade"
     selected_cat, selected_posts = cat_posts(selected_cat_slug, 8)
 
+    ordered_categories = Category.query.order_by(Category.name.asc()).all()
+    ordered_categories.sort(key=lambda cat: (_category_priority(cat), (cat.name or '').lower()))
+
     category_sections = []
-    for cat in Category.query.order_by(Category.name.asc()).limit(8).all():
+    for cat in ordered_categories[:10]:
         posts = (_published_posts_query().join(Post.categories)
                  .filter(Category.id == cat.id)
                  .order_by(desc(Post.published_at), desc(Post.id))
@@ -453,7 +470,7 @@ def home():
         if posts:
             category_sections.append({"category": cat, "posts": posts})
 
-    if not selected_cat and category_sections:
+    if (not selected_cat or not selected_posts) and category_sections:
         selected_cat = category_sections[0]["category"]
         selected_posts = category_sections[0]["posts"]
         selected_cat_slug = selected_cat.slug
