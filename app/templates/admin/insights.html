@@ -4,7 +4,14 @@
 {% block page_title %}Insights do site{% endblock %}
 {% block page_subtitle %}Leitura de performance do período selecionado com visão detalhada de sessões, pageviews e usuários.{% endblock %}
 {% block admin_content %}
-<section class="stats-grid insights-metrics-grid">
+<section class="stats-grid insights-hero-grid">
+  <article class="stat-card insights-pageviews-card">
+    <span>Pageviews totais</span>
+    <strong>{{ dashboard_stats.pv_total }}</strong>
+    <small>Últimas 24h: {{ dashboard_stats.pv_24h }}</small>
+  </article>
+
+  <section class="stats-grid insights-metrics-grid">
   {% for card in insights.cards %}
   <article class="stat-card">
     <span>{{ card.label }}</span>
@@ -29,6 +36,7 @@
     </small>
   </article>
   {% endfor %}
+  </section>
 </section>
 
 <section class="panel-card insights-chart-card">

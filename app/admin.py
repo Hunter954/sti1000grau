@@ -455,11 +455,11 @@ def _parse_date_input(value: str | None, fallback: date) -> date:
 
 def _build_chart_data(daily_series, metric_key: str):
     width = 980
-    height = 360
+    height = 250
     pad_left = 56
     pad_right = 18
-    pad_top = 20
-    pad_bottom = 44
+    pad_top = 14
+    pad_bottom = 36
     inner_w = max(1, width - pad_left - pad_right)
     inner_h = max(1, height - pad_top - pad_bottom)
 
@@ -721,6 +721,7 @@ def posts_list():
         posts=posts,
         term=term,
         source=source,
+        now_utc=datetime.utcnow(),
         **_common_admin_context('posts'),
     )
 
@@ -804,12 +805,15 @@ def posts_delete(post_id):
     if r:
         return r
     post = Post.query.get_or_404(post_id)
-    if post.source != 'local':
-        flash('Somente matérias locais podem ser excluídas por aqui.', 'warning')
-        return redirect(url_for('admin.posts_edit', post_id=post.id))
     image = post.featured_image or ''
+
+    db.session.execute(
+        post_categories.delete().where(post_categories.c.post_id == post.id)
+    )
+    PageView.query.filter(PageView.post_id == post.id).delete(synchronize_session=False)
     db.session.delete(post)
     db.session.commit()
+
     if image:
         _delete_local_media(image)
     flash('Matéria excluída com sucesso.', 'success')
@@ -911,6 +915,7 @@ def insights_page():
         "pageviews": "Pageviews",
         "total_users": "Total Users",
     }
+    dashboard_stats = _dashboard_stats()
     selected_metric = (request.args.get("metric") or "sessions").strip().lower()
     if selected_metric not in allowed_metrics:
         selected_metric = "sessions"
@@ -920,6 +925,7 @@ def insights_page():
     return render_template(
         "admin/insights.html",
         insights=insights,
+        dashboard_stats=dashboard_stats,
         selected_metric=selected_metric,
         metric_label=allowed_metrics[selected_metric],
         metric_chart=metric_chart,

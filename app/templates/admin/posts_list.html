@@ -27,9 +27,12 @@
           <td><span class="badge rounded-pill {% if not post.published_at %}text-bg-warning{% else %}text-bg-success{% endif %}">{% if not post.published_at %}Rascunho{% else %}Publicado{% endif %}</span></td>
           <td>{{ format_date_br(post.published_at) if post.published_at else '—' }}</td>
           <td class="text-end">
-            <div class="btn-group">
+            <div class="d-inline-flex gap-2 flex-wrap justify-content-end">
               <a class="btn btn-sm btn-outline-dark" href="{{ url_for('admin.posts_edit', post_id=post.id) }}">Editar</a>
               {% if post.published_at %}<a class="btn btn-sm btn-outline-secondary" href="{{ url_for('site.post', slug=post.slug) }}" target="_blank" rel="noopener">Ver</a>{% endif %}
+              <form method="post" action="{{ url_for('admin.posts_delete', post_id=post.id) }}" onsubmit="return confirm('Tem certeza que deseja excluir esta matéria?');" class="d-inline">
+                <button class="btn btn-sm btn-outline-danger" type="submit">Excluir</button>
+              </form>
             </div>
           </td>
         </tr>
