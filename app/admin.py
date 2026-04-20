@@ -807,12 +807,19 @@ def posts_delete(post_id):
     post = Post.query.get_or_404(post_id)
     image = post.featured_image or ''
 
-    db.session.execute(
-        post_categories.delete().where(post_categories.c.post_id == post.id)
-    )
-    PageView.query.filter(PageView.post_id == post.id).delete(synchronize_session=False)
-    db.session.delete(post)
-    db.session.commit()
+    try:
+        post.categories = []
+        db.session.flush()
+        db.session.execute(
+            post_categories.delete().where(post_categories.c.post_id == post.id)
+        )
+        PageView.query.filter(PageView.post_id == post.id).delete(synchronize_session=False)
+        Post.query.filter(Post.id == post.id).delete(synchronize_session=False)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        flash('Não foi possível excluir a matéria agora.', 'danger')
+        return redirect(url_for('admin.posts_list'))
 
     if image:
         _delete_local_media(image)
@@ -921,11 +928,18 @@ def insights_page():
         selected_metric = "sessions"
 
     metric_chart = _build_chart_data(insights["daily_series"], selected_metric)
+    card_lookup = {card["key"]: card for card in insights.get("cards", [])}
+    summary_cards = [
+        card_lookup.get("sessions", {"label": "Sessions", "value": insights["current"].get("sessions", 0), "delta": 0}),
+        card_lookup.get("pageviews", {"label": "Pageviews", "value": insights["current"].get("pageviews", 0), "delta": 0}),
+        card_lookup.get("total_users", {"label": "Total Users", "value": insights["current"].get("total_users", 0), "delta": 0}),
+    ]
 
     return render_template(
         "admin/insights.html",
         insights=insights,
         dashboard_stats=dashboard_stats,
+        summary_cards=summary_cards,
         selected_metric=selected_metric,
         metric_label=allowed_metrics[selected_metric],
         metric_chart=metric_chart,
